@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from django.utils.timezone import now, annotate
-from django.db.aggregate import Sum
+from django.utils.timezone import now
+from django.db.models import Sum
 from quiz.base.models import Pergunta, Resposta
 from quiz.base.forms import AlunoForm
 
@@ -38,7 +38,7 @@ def classificacao(request):
         pontuacao_do_aluno = pontos_dct['pontos__sum']
         
         numero_alunos_maior_pontuacao = Resposta.objects.values('aluno').annotate(Sum('pontos')).filter(pontos__sum__gt = pontuacao_do_aluno).count()
-        primeiros_alunos_classificacao  list(Resposta.objects.values('aluno', 'aluno__nome').annotate(Sum('pontos')).order_by('-pontos__sum')[:5])
+        primeiros_alunos_classificacao = list(Resposta.objects.values('aluno', 'aluno__nome').annotate(Sum('pontos')).order_by('-pontos__sum')[:5])
         
         context={'pontuacao_do_aluno': pontuacao_do_aluno,
                 'posicao_do_aluno': numero_alunos_maior_pontuacao + 1,
